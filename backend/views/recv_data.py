@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app import mongo
+from app import mongo, app
 from flask_pymongo.wrappers import Database
 from datetime import datetime
 
@@ -10,15 +10,19 @@ view = Blueprint("recv_data", __name__)
 @view.route("/", methods = ['POST'])
 def recv_data():
     assert request.json != None
+    print(request.data)
+
     recv: dict = request.json
     ProtocolVersion = recv.get('ProtocolVersion')
-    if not (ProtocolVersion and ProtocolVersion >= 2):
+    if not (ProtocolVersion and ProtocolVersion >= app.config['LASTED_PROTOCOLVERSION']):
         return jsonify({'ErrorCode': 1, 'Data': '不支持的版本'})
     try:
-
+        CreateTime = recv.get('CreateTime')
+        if not CreateTime:
+            CreateTime = datetime.now()
         record = {
             'device_id': recv['DeviceID'],
-            'CreateTime': recv.get('CreateTime', datetime.now()),
+            'CreateTime': CreateTime,
             'ProjectID': recv['ProjectID'],
             'Data': recv['Data'],
         }
