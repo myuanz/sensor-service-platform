@@ -1,0 +1,2 @@
+MONGO_URI = "mongodb://10.18.52.137:27018/sensor"
+#SERVER_NAME = "192.168.1.101"
