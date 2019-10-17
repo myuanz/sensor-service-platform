@@ -7,7 +7,8 @@
   created 14 Feb 2016
   modified 22 Jan 2019
   by Tom Igoe
-  
+  modified 2019/10/17
+  by myuan
   this example is in the public domain
  */
 #include <ArduinoHttpClient.h>
@@ -25,8 +26,8 @@
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 
-char serverAddress[] = "192.168.1.101";  // server address
-int port = 5000;
+char serverAddress[] = "10.18.52.137";  // server address
+int port = 9997;
 
 WiFiClient wifi;
 HttpClient client = HttpClient(wifi, serverAddress, port);
