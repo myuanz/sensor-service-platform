@@ -9,8 +9,9 @@ view = Blueprint("recv_data", __name__)
 
 @view.route("/", methods = ['POST'])
 def recv_data():
+    print(request.data, request.headers)
+
     assert request.json != None
-    print(request.data)
 
     recv: dict = request.json
     ProtocolVersion = recv.get('ProtocolVersion')
