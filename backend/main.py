@@ -12,5 +12,5 @@ app.register_blueprint(recv_data.view)
 
 if __name__ == '__main__':
     # app.run(host="0.0.0.0", debug=True)
-    http_server = WSGIServer(('0.0.0.0', 9996), app)
+    http_server = WSGIServer(('0.0.0.0', 9997), app)
     http_server.serve_forever()
