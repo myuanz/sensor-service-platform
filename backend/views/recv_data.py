@@ -18,11 +18,10 @@ def recv_data():
         return jsonify({'ErrorCode': 1, 'Data': '不支持的版本'})
     try:
         CreateTime = recv.get('CreateTime')
-        if not CreateTime:
-            CreateTime = datetime.now()
         record = {
             'device_id': recv['DeviceID'],
             'CreateTime': CreateTime,
+            'RecvTime': datetime.now(),
             'ProjectID': recv['ProjectID'],
             'Data': recv['Data'],
         }
