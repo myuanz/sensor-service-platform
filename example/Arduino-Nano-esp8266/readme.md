@@ -19,7 +19,7 @@ connect_WiFi(SSID, PASS);
 1. 生成数据. generate_data
 2. 打开TCP. connect_TCP
 3. 发送数据. send_data
-4. 关闭TCP. close_TCP
+4. 关闭TCP. close_TCP  
 ```
 data = generate_data(HOST, String(4), String(5), String(millis() * 10), "0");
 connect_TCP(HOST, String(PORT));
