@@ -2,11 +2,7 @@
 #include <Wire.h> //IIC库
 #define _baudrate 115200
 #include <math.h>
-
-#define SSID "N6-506-ARM"
-#define PASS "armn6-506qwg"
-#define HOST String("10.18.52.136")
-#define PORT 9997
+#include "AT_HTTP.h"
 
 int BH1750address = 0x23; //芯片地址为16位23
 #define BMP180ADD 0x77    // I2C address of BMP180
@@ -31,6 +27,11 @@ long b5;
 double altitude;
 
 byte buff[2];
+#define SSID "N6-506-ARM"
+#define PASS "armn6-506qwg"
+#define HOST "10.18.52.137"
+#define PORT 9997
+
 void setup()
 {
     Wire.begin();
@@ -38,18 +39,9 @@ void setup()
     Serial.begin(_baudrate);
     OSS = 2; // Oversampling Setting           0: single    1: 2 times    2: 4 times   3: 8 times
     // BMP180start();         //启动BMP180
-    Serial.println("AT");  //发送AT，返回OK
-    // Serial.println("ATE0");
-    // Serial.println("ATE1");
+    init_AT();
+    connect_WiFi(SSID, PASS);
     
-
-    while (!Serial.find("OK"));
-    Serial.println("Data ready to sent!");
-    // Serial.println("ATE0");
-    // Serial.println("ATE0");
-    // while (!Serial.find("OK"));
-    // Serial.println("关闭回显");
-    connectWiFi();
     
     delay(700);
 }
@@ -63,103 +55,21 @@ void loop()
 
 void show()
 {
-    String cmd, Lig, temp, pre, alt; //定义字符串？ cmd,Lig,temp,pre,alt
+    String data, Lig, temp, pre, alt; //定义字符串？ cmd,Lig,temp,pre,alt
     uint16_t val = 0;
     
-    // cmd = "K:Light:" + k + ":Temperature:" + k + ":Pressure:" + k + ":altitude:" + k;
-    cmd = generate_data(HOST, String(4), String(5), String(millis()), "0");
-    String k = "asd";
-    
-    //cmd = "K:Light:" + k + ":Temperature:" + k + ":Pressure:" + k + ":altitude:" + k;
+    data = generate_data(HOST, String(4), String(5), String(millis() * 10), "0");
+    connect_TCP(HOST, String(PORT));
+    send_data(data);  
+    close_TCP();
 
-  
-    // Serial.println(cmd);
-    connectTCP();
-    Serial.print("AT+CIPSEND=");
-    Serial.println(cmd.length());
-    while (!Serial.find(">"));
-    
-    Serial.println(cmd);
-    while (!Serial.find("SEND OK"));
-
-    
-    delay(3000);
-    closeTCP();
-    
-}
-String generate_data(String Host, String ProjectID, String DeviceID, String Data, String CreateTime)
-{
-    /*
-        POST / HTTP/1.0
-        Host: 10.18.52.136
-        Content-Type: application/json
-        Content-Length: 82
-
-        {
-            "CreateTime": "", 
-            "ProjectID": 0, 
-            "ProtocolVersion": 2, 
-            "DeviceID": 2, 
-            "Data": 0
-        }
-    */
-
-    String json = "{";
-    json += "\"CreateTime\": " + CreateTime + ", ";
-    json += "\"ProjectID\": " + ProjectID + ", ";
-    json += "\"DeviceID\": " + DeviceID + ", ";
-    json += "\"ProtocolVersion\": 2, ";
-    json += "\"Data\": " + Data;
-    json += "}";
-    
-
-    String data = "";
-    data += "POST / HTTP/1.0\n";
-    data += "Host: " + Host + "\n";
-    data += "Content-Type: application/json\n";
-    data += "Content-Length: " + String(json.length()) + "\n";
-    data += "\r\n";
-    data += json;
-    // Serial.println(data);
-    return data;
-    
+    data = generate_data(HOST, String(4), String(5), String(millis() * 100), "0");
+    connect_TCP(HOST, String(PORT));
+    send_data(data);  
+    close_TCP();
 }
 
-boolean connectWiFi()
-{
-    Serial.println("AT+CWMODE=1");
-    // Serial.println("AT+CIPMUX=0");
-    delay(2000);
-    // 连接到Wifi
-    String cmd = "AT+CWJAP=\"";
-    cmd += SSID;
-    cmd += "\",\"";
-    cmd += PASS;
-    cmd += "\"";
-    Serial.println(cmd);
-    while (!Serial.find("OK"));
-    Serial.println("ok");
-}
 
-void connectTCP()
-{
-    // Serial.println("AT+CIPSTART=\"TCP\",\"192.168.1.101\",9997");
-    Serial.println("AT+CIPSTART=\"TCP\",\"" + HOST + "\"," + String(PORT));
-    while (!Serial.find("OK"));
-//    while (true){
-//        String temp = Serial.readString();
-//        Serial.println("connectTCP get: " + temp);
-//        if (temp.indexOf("OK") != -1){
-//            break;
-//        }
-//    }
-
-    Serial.println("connectTCP");
-}
-void closeTCP(){
-    Serial.println("AT+CIPCLOSE");
-    while (!Serial.find("OK"));
-}
 int BH1750_Read(int address)
 {
     int i = 0;
