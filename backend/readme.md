@@ -24,7 +24,7 @@ db.devices.insert({
     "ID": 1, 
     "owner": "040717130",
     "use": "Arduino MKR1000例程演示, 将会发送自身已运行时间",
-    "positon": "此人桌上",
+    "position": "此人桌上",
     "note": ""
 })
 
@@ -32,12 +32,12 @@ db.devices.insert({
     "ID": 2, 
     "owner": "040717130",
     "use": "ESP32 例程演示, 将会发送从DHT11读取到的温度和湿度",
-    "positon": "此人桌上",
+    "position": "此人桌上",
     "note": ""
 })
 
 db.data_record.insert({
-    "device_id" : Number, 
+    "DeviceID" : Number, 
     "CreateTime" : Date, 
     "RecvTime" : Date, 
     "ProjectID" : Number, 

@@ -21,7 +21,7 @@ def recv_data():
     try:
         CreateTime = recv.get('CreateTime')
         record = {
-            'device_id': recv['DeviceID'],
+            'DeviceID': recv['DeviceID'],
             'CreateTime': CreateTime,
             'RecvTime': datetime.now(),
             'ProjectID': recv['ProjectID'],
