@@ -20,7 +20,9 @@ text = 'device_id, CreateTime, RecvTime, Data\n'
 
 devices_id = []
 for i in data.find({'ProjectID': projectID}):
-    device_id = i.get('device_id')
+    device_id = i.get('DeviceID')
+    if not device_id:
+        device_id = i.get('device_id') # 早些年酿成大错
     if device_id not in devices_id:
         device = devices.find_one({'ID': device_id})
 
