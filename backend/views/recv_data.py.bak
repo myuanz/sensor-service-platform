@@ -11,8 +11,8 @@ view = Blueprint("recv_data", __name__)
 @view.route("/", methods = ['POST'])
 def recv_data():
     print(request.data, request.headers, request.json)
-    if request.json == None:
-        return jsonify(request.data)
+
+    assert request.json != None
 
     recv: dict = request.json
     ProtocolVersion = recv.get('ProtocolVersion')

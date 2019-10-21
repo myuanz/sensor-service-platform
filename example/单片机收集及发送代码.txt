@@ -1,5 +1,5 @@
 
-#include <Wire.h> //IIC¿â
+#include <Wire.h> //IICåº“
 #define _baudrate 115200
 #include <math.h>
 
@@ -7,7 +7,7 @@
 #define PASS "armn6-506qwg"
 
 
-int BH1750address = 0x23;//Ğ¾Æ¬µØÖ·Îª16Î»23
+int BH1750address = 0x23;//èŠ¯ç‰‡åœ°å€ä¸º16ä½23
 #define BMP180ADD 0x77  // I2C address of BMP180  
 
 unsigned char OSS;
@@ -36,10 +36,10 @@ void setup()
   Wire.begin();
   Serial.begin(_baudrate);
   OSS = 2;  // Oversampling Setting           0: single    1: 2 times    2: 4 times   3: 8 times
-  BMP180start();                     //Æô¶¯BMP180
-  Serial.println("AT");             //·¢ËÍAT£¬·µ»ØOK
+  BMP180start();                     //å¯åŠ¨BMP180
+  Serial.println("AT");             //å‘é€ATï¼Œè¿”å›OK
   delay(500);                         //  
-  if (Serial.find("OK"))           //Èç¹û·¢ËÍÁËOK  ÔòÊä³ö"Data ready to sent!" Í¬Ê±Á¬½Ówifi,TCP,¶î£¬²»ÊÇUDPÂï
+  if (Serial.find("OK"))           //å¦‚æœå‘é€äº†OK  åˆ™è¾“å‡º"Data ready to sent!" åŒæ—¶è¿æ¥wifi,TCP,é¢ï¼Œä¸æ˜¯UDPå˜›
   { Serial.println("Data ready to sent!");
     connectWiFi();
     connectTCP();
@@ -48,14 +48,14 @@ void setup()
 }
 
 void loop() {
-  calculate();           //Ñ­»· calculate
-  show();             //¶¨ÒåÏÂÃæ¶¨ÒåµÄshowº¯Êı£¬Ñ­»·
-  delay(600000);  //Ñ­»··¢ËÍÑÓ³Ù
+  calculate();           //å¾ªç¯ calculate
+  show();             //å®šä¹‰ä¸‹é¢å®šä¹‰çš„showå‡½æ•°ï¼Œå¾ªç¯
+  delay(600000);  //å¾ªç¯å‘é€å»¶è¿Ÿ
 }
 
 void show()
 {
-  String cmd, Lig, temp, pre, alt;          //¶¨Òå×Ö·û´®£¿ cmd,Lig,temp,pre,alt   
+  String cmd, Lig, temp, pre, alt;          //å®šä¹‰å­—ç¬¦ä¸²ï¼Ÿ cmd,Lig,temp,pre,alt   
   uint16_t val = 0;
   BH1750_Init(BH1750address);                //
   BH1750_Read(BH1750address);
@@ -96,7 +96,7 @@ void BH1750_Init(int address)
   Wire.beginTransmission(address);
   Wire.write(0x10);//1lx reolution 120ms
   Wire.endTransmission();
-}                                                  //BH1750¹âÇ¿Êı¾İµÄ½ÓÊÕ
+}                                                  //BH1750å…‰å¼ºæ•°æ®çš„æ¥æ”¶
 
 /** calculate centure **/
 void calculate()
@@ -238,7 +238,7 @@ boolean connectWiFi()
 {
   Serial.println("AT+CWMODE=1");
   delay(2000);
-  // Á¬½Óµ½Wifi
+  // è¿æ¥åˆ°Wifi
   String cmd = "AT+CWJAP=\"";
   cmd += SSID;
   cmd += "\",\"";
@@ -256,5 +256,5 @@ boolean connectTCP() {
   delay(1000);
 }
 //10.18.52.132
-//192.168.43.249 ÈÈµãµçÄÔ
-//192.168.3.111 µçÄÔ506
+//192.168.43.249 çƒ­ç‚¹ç”µè„‘
+//192.168.3.111 ç”µè„‘506

@@ -8,6 +8,8 @@ import urequests
 SSID = "N6-506-ARM"
 PASSWORD = "armn6-506qwg"
 ADDRESS = "http://10.18.52.137:9997"
+ADDRESS = "http://192.168.1.101:9997"
+ADDRESS = "http://10.18.52.136:9997"
 
 station = network.WLAN(network.STA_IF)
 station.active(True)
