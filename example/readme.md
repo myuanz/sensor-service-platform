@@ -5,4 +5,4 @@ Arduino nano 外挂 ESP8266
 ESP32
 Export-Data 导出数据
 ```
-进入对应目录查看readme
+进入对应目录查看readme, 仅nano支持第三版协议.
