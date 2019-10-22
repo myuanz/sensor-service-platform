@@ -38,7 +38,7 @@ void setup()
     
     Serial.begin(_baudrate);
     OSS = 2; // Oversampling Setting           0: single    1: 2 times    2: 4 times   3: 8 times
-    // BMP180start();         //启动BMP180
+    BMP180start();         //启动BMP180
     init_AT();
     connect_WiFi(SSID, PASS);
     
@@ -48,27 +48,10 @@ void setup()
 
 void loop()
 {
-    //calculate();   //循环 calculate
+    calculate();   //循环 calculate
     show();        //定义下面定义的show函数，循环
     delay(5000); //循环发送延迟
 }
-
-void show()
-{
-    String data, Lig, temp, pre, alt; //定义字符串？ cmd,Lig,temp,pre,alt
-    uint16_t val = 0;
-    
-    data = generate_data(HOST, String(4), String(5), String(millis() * 10), "0");
-    connect_TCP(HOST, String(PORT));
-    send_data(data);  
-    close_TCP();
-
-    data = generate_data(HOST, String(4), String(5), String(millis() * 100), "0");
-    connect_TCP(HOST, String(PORT));
-    send_data(data);  
-    close_TCP();
-}
-
 
 int BH1750_Read(int address)
 {
@@ -227,6 +210,42 @@ unsigned long bmp180ReadUP()
     up = (((unsigned long)msb << 16) | ((unsigned long)lsb << 8) | (unsigned long)xlsb) >> (8 - OSS); //16 to 19 bit
     return up;
 }
+
+
+void show()
+{
+    String data, Lig, temp, pre, alt; //定义字符串？ cmd,Lig,temp,pre,alt        
+    uint16_t val = 0;
+    BH1750_Init(BH1750address);                //
+    BH1750_Read(BH1750address);
+    val = ((buff[0] << 8) | buff[1]) / 1.2;        
+    Lig = val;
+    temp = temperature;
+    pre = pressure / 100;
+    alt = altitude;
+    delay(1000);        
+    data = generate_data(HOST, String(5), String(4), String(Lig), "0");
+    connect_TCP(HOST, String(PORT));
+    send_data(data);  
+    close_TCP();
+
+    data = generate_data(HOST, String(6), String(4), String(temp), "0");
+    connect_TCP(HOST, String(PORT));
+    send_data(data);  
+    close_TCP();
+
+    data = generate_data(HOST, String(7), String(4), String(pre), "0");
+    connect_TCP(HOST, String(PORT));
+    send_data(data);  
+    close_TCP();
+
+    data = generate_data(HOST, String(8), String(4), String(alt), "0");
+    connect_TCP(HOST, String(PORT));
+    send_data(data);  
+    close_TCP();
+}
+
+
 
 //10.18.52.132
 //192.168.43.249 热点电脑
