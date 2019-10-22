@@ -1,4 +1,4 @@
-
+#include <Vector.h>
 #include <Wire.h> //IIC库
 #define _baudrate 115200
 #include <math.h>
@@ -214,35 +214,30 @@ unsigned long bmp180ReadUP()
 
 void show()
 {
-    String data, Lig, temp, pre, alt; //定义字符串？ cmd,Lig,temp,pre,alt        
+    String data, Lig, temp, pre, alt;
     uint16_t val = 0;
-    BH1750_Init(BH1750address);                //
+    BH1750_Init(BH1750address);
     BH1750_Read(BH1750address);
     val = ((buff[0] << 8) | buff[1]) / 1.2;        
     Lig = val;
     temp = temperature;
     pre = pressure / 100;
     alt = altitude;
-    delay(1000);        
-    data = generate_data(HOST, String(5), String(4), String(Lig), "0");
+    delay(1000);     
+
+    
+    String data_array[4] = {Lig, temp, pre, alt};
+    Vector<String> data_vector(data_array, 4);
+    
+    int project_array[4] = {4, 5, 6, 7};
+    Vector<int> project_vector(project_array, 4);
+    
+    data = generate_data_3(HOST, String(4), project_vector, data_vector, "0");
     connect_TCP(HOST, String(PORT));
     send_data(data);  
     close_TCP();
 
-    data = generate_data(HOST, String(6), String(4), String(temp), "0");
-    connect_TCP(HOST, String(PORT));
-    send_data(data);  
-    close_TCP();
-
-    data = generate_data(HOST, String(7), String(4), String(pre), "0");
-    connect_TCP(HOST, String(PORT));
-    send_data(data);  
-    close_TCP();
-
-    data = generate_data(HOST, String(8), String(4), String(alt), "0");
-    connect_TCP(HOST, String(PORT));
-    send_data(data);  
-    close_TCP();
+    
 }
 
 

@@ -1,4 +1,13 @@
+#include <Vector.h>
 #include <Wire.h>
+
+#define generate_quotation(value) "\"" + String(value) + "\"" 
+#define generate_quotation_str(name, value) "\"" + String(name) + "\": " + value
+#define generate_quotation_single(name_value) "\"" + String(#name_value) + "\": " + name_value
+
+//#define _nmhe_I(name, version) name##version
+//#define _nmhe(name, version) _nmhe_I(name, version)
+//#define generate_data(...) _nmhe(##generate_data, PROTOCOLVERSION)##(__VA_ARGS__)
 
 // #define WAIT_KEYWORD(KEYWORD, TIMES)                         \
 //     for (int i = 0; i < TIMES && !Serial.find(KEYWORD); i++) \
@@ -21,7 +30,6 @@ void WAIT_OK()
 {
     WAIT_KEYWORD("OK", WAIT_TIME);
 }
-#define PROTOCOLVERSION 2
 
 void init_AT()
 {
@@ -80,7 +88,7 @@ void send_data_buff(String Data)
     Serial.println(Data);
 }
 
-String generate_data(String Host, String ProjectID, String DeviceID, String Data, String CreateTime)
+String generate_data_2(String Host, String ProjectID, String DeviceID, String Data, String CreateTime)
 {
     // 生成第二版本的协议对应的数据
     /*
@@ -97,13 +105,14 @@ String generate_data(String Host, String ProjectID, String DeviceID, String Data
             "Data": 0
         }
     */
-
+    const int ProtocolVersion = 2;
+    
     String json = "{";
-    json += "\"CreateTime\": " + CreateTime + ", ";
-    json += "\"ProjectID\": " + ProjectID + ", ";
-    json += "\"DeviceID\": " + DeviceID + ", ";
-    json += "\"ProtocolVersion\": " + String(PROTOCOLVERSION) + ", ";
-    json += "\"Data\": " + Data;
+    json += generate_quotation_single(CreateTime) + ", "; // -> "CreateTime": CreateTime
+    json += generate_quotation_single(ProjectID) + ", ";
+    json += generate_quotation_single(DeviceID) + ", ";
+    json += generate_quotation_single(ProtocolVersion) + ", ";
+    json += generate_quotation_single(Data);
     json += "}";
 
     String data = "";
@@ -116,3 +125,41 @@ String generate_data(String Host, String ProjectID, String DeviceID, String Data
     return data;
 }
 
+template <typename T>
+String generate_data_3(String Host, String DeviceID, Vector<int> ProjectID, Vector<T> Data, String CreateTime)
+{
+    // 生成第三版本的协议对应的数据, add attay to json;
+
+    const int ProtocolVersion = 3;
+
+    String json = "{";
+    json += generate_quotation_single(CreateTime) + ", "; // -> "CreateTime": CreateTime
+    
+    String temp = generate_quotation("ProjectID") + ": [";
+    int size = ProjectID.size();
+    for (int i=0; i<size; i++){
+        temp += String(ProjectID[i]) + (i==size-1?"":", ");
+    }
+    temp += "], ";
+    json += temp;
+    json += generate_quotation_single(DeviceID) + ", ";
+    json += generate_quotation_single(ProtocolVersion) + ", ";
+
+
+    temp = generate_quotation("Data") + ": [";
+    for (int i=0; i<size; i++){
+        temp += Data[i] + (i==size-1?"":", ");
+    }
+    temp += "]";
+    json += temp;
+    json += "}";
+
+    String data = "";
+    data += "POST / HTTP/1.0\n";
+    data += "Host: " + Host + "\n";
+    data += "Content-Type: application/json\n";
+    data += "Content-Length: " + String(json.length()) + "\n";
+    data += "\r\n";
+    data += json;
+    return data;
+}
